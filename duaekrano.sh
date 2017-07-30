@@ -1,17 +1,22 @@
 #!/bin/bash
 
-#killing previous x11vnc process 
+#killing previous x11vnc process
 killall x11vnc
 outputpid=0
 
+monitor=$(xrandr | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected primary.*/\1/")
+modeline=$(gtf 1280 800 60 | grep "Modeline")
+# echo $monitor
+# exit 1
+
 #setting up the mobile screen
-gtf 1280 800 60 && 
-xrandr --newmode "1280x800_60.00"  83.46  1280 1344 1480 1680  800 801 804 828  -HSync +Vsync&& 
-xrandr --addmode VIRTUAL1 1280x800_60.00 && 
-xrandr --output VIRTUAL1 --mode 1280x800_60.00 --right-of eDP1 &
+gtf 1280 800 60 &&
+xrandr --newmode "1280x800_60.00"  83.46  1280 1344 1480 1680  800 801 804 828  -HSync +Vsync&&
+xrandr --addmode VIRTUAL1 1280x800_60.00 &&
+xrandr --output VIRTUAL1 --mode 1280x800_60.00 --right-of $monitor &
 
 #reading options from keyboard
-read -n1 -r -p "Press option to continue: 
+read -n1 -r -p "Press option to continue:
   Press [1] to option 1
   Press [2] to option 2  " key
 
