@@ -1,4 +1,4 @@
-# duaekrano
+# Duaekrano
 This script allows set up an android device as second monitor
  
 ## Requirements 
