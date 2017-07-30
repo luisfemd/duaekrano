@@ -12,8 +12,8 @@ xrandr --output VIRTUAL1 --mode 1280x800_60.00 --right-of eDP1 &
 
 #reading options from keyboard
 read -n1 -r -p "Press option to continue: 
-  Press [1] to PTK Laptop without second screen
-  Press [2] to PTK laptop with second screen  " key
+  Press [1] to option 1
+  Press [2] to option 2  " key
 
 if [ "$key" = '1' ]; then
   x11vnc -clip 1280x800+1366+0 >/dev/null 2>&1 &
