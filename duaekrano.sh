@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #killing previous x11vnc process
-killall x11vnc
+kill -9 $(ps aux | grep x11vnc | grep -v "grep" | awk '{print $2}')
 outputpid=0
 
 monitor=$(xrandr | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected primary.*/\1/")
