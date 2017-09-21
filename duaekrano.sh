@@ -17,10 +17,10 @@ EOF
 kill_x11vnc(){
   if pgrep -x "x11vnc" > /dev/null
   then
-      echo "X11VNC is running. Stopping process..."
-      kill -9 $(get_x11vnc_pid)
+    echo "X11VNC is running. Stopping process..."
+    kill -9 $(get_x11vnc_pid)
   else
-      echo "Stopped"
+    echo "Stopped"
   fi
 }
 
@@ -38,18 +38,18 @@ get_x11vnc_pid(){
 get_gnirehtet(){
   if test -e gnirehtet
   then
-      echo "Gnirehtet is already downloaded"
+    echo "Gnirehtet is already downloaded"
   else
-      echo "Downloading Gnirehtet"
-      wget https://github.com/Genymobile/gnirehtet/releases/download/v1.1.1/gnirehtet-v1.1.1.zip > /dev/null
-      unzip gnirehtet-v1.1.1.zip
+    echo "Downloading Gnirehtet"
+    wget https://github.com/Genymobile/gnirehtet/releases/download/v1.1.1/gnirehtet-v1.1.1.zip > /dev/null
+    unzip gnirehtet-v1.1.1.zip
   fi
 }
 
 get_monitor(){
   xrandr | \
   grep " connected" | \
-  sed -e "s/\([A-Z0-9]\+\) connected primary.*/\1/"
+  sed -e "s/\([A-Z0-9]\+\) .*/\1/"
 }
 
 get_modeline(){
@@ -68,6 +68,13 @@ get_ip(){
   ifconfig $interface | \
   grep "inet addr:" | \
   awk '{print $2}' | \
+  cut -d ':' -f 2
+}
+
+get_port(){
+  ss -l -p -n | \
+  grep $outputpid  | \
+  awk '/*\:/ {print $5}' | \
   cut -d ':' -f 2
 }
 
@@ -111,7 +118,8 @@ process(){
 
   #getting info about net connections
   interface=$(get_interface)
-  sleep 2 && port=$(ss -l -p -n | grep $outputpid  | awk '/*\:/ {print $5}' | cut -d ':' -f 2)
+  sleep 2 && \
+  port=$(get_port)
   ip=$(get_ip)
 
   echo "IP: $ip"
@@ -134,11 +142,10 @@ process(){
 
 case "$1" in
   right)
-      process "$@";;
+    process "$@";;
   left)
-      process "$@";;
-*)
-  usage
-  exit 0
-  ;;
+    process "$@";;
+  *)
+    usage
+    exit 0;;
 esac
