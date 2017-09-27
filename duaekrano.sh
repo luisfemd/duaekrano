@@ -53,6 +53,9 @@ get_monitor(){
 }
 
 get_modeline(){
+  frecuency=60
+  w=1280
+  h=800
   gtf $w $h $frecuency | \
   grep "Modeline" | \
   sed 's: *Modeline ::'
@@ -88,6 +91,9 @@ process(){
   w=1280
   h=800
 
+  echo $w
+  echo $h
+
   monitor=$(get_monitor)
   modeline=$(get_modeline)
   # echo $monitor
@@ -96,9 +102,9 @@ process(){
   echo $monitor
   #setting up the mobile screen
   # gtf 1280 800 $frecuency &&
-  xrandr --newmode $modeline&&
+  xrandr --newmode $(get_modeline) &&
   xrandr --addmode VIRTUAL1 $[w]x$[h]_60.00 &&
-  xrandr --output VIRTUAL1 --mode $[w]x$[h]_60.00 --right-of $monitor &
+  xrandr --output VIRTUAL1 --mode $[w]x$[h]_60.00 --$1-of $monitor &
 
   #reading options from keyboard
   # read -n1 -r -p "Press option to continue:
