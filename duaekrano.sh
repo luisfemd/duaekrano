@@ -17,10 +17,10 @@ EOF
 kill_x11vnc(){
   if pgrep -x "x11vnc" > /dev/null
   then
-    echo "X11VNC is running. Stopping process..."
+    echo "x11vnc is running. Stopping process..."
     kill -9 $(get_x11vnc_pid)
   else
-    echo "Stopped"
+    echo "x11vnc stopped"
   fi
 }
 
@@ -53,10 +53,9 @@ get_monitor(){
 }
 
 get_modeline(){
-  frecuency=60
   w=1280
   h=800
-  gtf $w $h $frecuency | \
+  cvt $w $h | \
   grep "Modeline" | \
   sed 's: *Modeline ::'
 }
@@ -82,45 +81,25 @@ get_port(){
 }
 
 process(){
-  kill_x11vnc
+  #TODO: Edit the config file of RealVNC app in Android device to connect this PC
+  #adb shell dumpsys activity # to know the activities launched in the android device
+  #adb shell am start -n com.package.name/com.package.name.ActivityName
+
+  #Open RealVNC into Android device
+  adb shell am start -n \
+  com.realvnc.viewer.android/.app.ConnectionChooserActivity >/dev/null 2>&1 &
+
+  #Preparing USB Reverse Tethering
   get_gnirehtet
+  # echo "Preparing USB Reverse Tethering..."
+  ./gnirehtet relay >/dev/null 2>&1 && \
+  ./gnirehtet install &  \
+  ./gnirehtet start  &
 
-  # exit 1;
-  outputpid=0
-  frecuency=60
-  w=1280
-  h=800
-
-  echo $w
-  echo $h
-
-  monitor=$(get_monitor)
-  modeline=$(get_modeline)
-  # echo $monitor
-  # exit 1
-  echo $modeline
-  echo $monitor
-  #setting up the mobile screen
-  # gtf 1280 800 $frecuency &&
-  xrandr --newmode $(get_modeline) &&
-  xrandr --addmode VIRTUAL1 $[w]x$[h]_60.00 &&
-  xrandr --output VIRTUAL1 --mode $[w]x$[h]_60.00 --$1-of $monitor &
-
-  #reading options from keyboard
-  # read -n1 -r -p "Press option to continue:
-  #   Press [1] to option 1
-  #   Press [2] to option 2  " key
-
-  # if [ "$key" = '1' ]; then
+  #Setting up VNC Server
+  kill_x11vnc
   x11vnc -clip 1280x800+1366+0 >/dev/null 2>&1 &
   outputpid=$!
-  # elif [ "$key" = '2' ]; then
-  #x11vnc -clip 1280x800+1366+1080 >/dev/null 2>&1 &
-  #outputpid=$!
-  # else
-  #   printf "Error, invalid option"
-  #   exit 1
-  # fi
 
   #getting info about net connections
   interface=$(get_interface)
@@ -132,18 +111,14 @@ process(){
   echo "Port: $port"
   echo "Interface: $interface"
 
-  #TODO: Edit the config file of RealVNC app in Android device to connect this PC
-  #adb shell dumpsys activity # to know the activities launched in the android device
-  #adb shell am start -n com.package.name/com.package.name.ActivityName
-
-  #Open RealVNC into Android device
-  adb shell am start -n com.realvnc.viewer.android/.app.ConnectionChooserActivity
-
-  #Preaparing USB Reverse Tethering
-  echo "Preparing USB Reverse Tethering..."
-  ./gnirehtet relay >/dev/null 2>&1 & \
-  ./gnirehtet install && \
-  ./gnirehtet start
+  #Setting up the mobile screen
+  monitor=$(get_monitor)
+  modeline=$(get_modeline)
+  mode_name=`echo $modeline | cut -d'"' -f 2`
+  mode_params=${modeline##*'"'}
+  xrandr --newmode $mode_name$mode_params &&
+  xrandr --addmode VIRTUAL1 $mode_name &&
+  xrandr --output VIRTUAL1 --mode $mode_name --right-of $monitor &
 }
 
 case "$1" in
