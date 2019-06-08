@@ -36,13 +36,16 @@ get_x11vnc_pid(){
 }
 
 get_gnirehtet(){
-  if test -e gnirehtet
+  if test -e /tmp/gnirehtet/gnirehtet
   then
     echo "Gnirehtet is already downloaded"
   else
     echo "Downloading Gnirehtet"
-    wget https://github.com/Genymobile/gnirehtet/releases/download/v1.1.1/gnirehtet-v1.1.1.zip > /dev/null
-    unzip gnirehtet-v1.1.1.zip
+    # wget https://github.com/Genymobile/gnirehtet/releases/download/v1.1.1/gnirehtet-v1.1.1.zip > /dev/null
+    version=$(curl --silent "https://api.github.com/repos/Genymobile/gnirehtet/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+    wget https://github.com/Genymobile/gnirehtet/releases/download/$version/gnirehtet-java-$version.zip -P /tmp/
+    unzip /tmp/gnirehtet-java-$version.zip -d /tmp/gnirehtet
+    cd /tmp/gnirehtet
   fi
 }
 
