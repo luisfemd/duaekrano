@@ -45,7 +45,7 @@ get_gnirehtet(){
     version=$(curl --silent "https://api.github.com/repos/Genymobile/gnirehtet/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
     wget https://github.com/Genymobile/gnirehtet/releases/download/$version/gnirehtet-java-$version.zip -P /tmp/
     unzip /tmp/gnirehtet-java-$version.zip -d /tmp/gnirehtet
-    cd /tmp/gnirehtet
+    cd /tmp/gnirehtet/gnirehtet-java
   fi
 }
 
