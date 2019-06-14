@@ -26,3 +26,7 @@ Tethering: [Gnirehtet](http://github.com/Genymobile/gnirehtet)
 
 ## About Duaekrano
 Duaekrano means second screen in [Esperanto](http://en.wikipedia.org/wiki/Esperanto)
+
+
+## xrandr problems
+* [canot find output VIRTUAL](https://unix.stackexchange.com/questions/378373/add-virtual-output-to-xorg)
